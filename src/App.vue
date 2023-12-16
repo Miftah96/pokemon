@@ -1,11 +1,10 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
-  <RouterView />
+    <RouterView />
 </template>
+<script>
+import { RouterLink, RouterView } from 'vue-router'
 
+</script>
 <style scoped>
 header {
   line-height: 1.5;
