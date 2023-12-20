@@ -1,18 +1,62 @@
 <template>
     <div class="mx-auto max-w-2xl px-4 py-18 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8 ">
         <div class="">
-            <div class="grid grid-cols-3 gap-4">
-                <div class="col-span-1 bg-champagne sm:p-4">
+            <div class="grid sm:grid-cols-3 gap-4">
+                <div class="col-span-1 bg-champagne rounded sm:p-4 w-full h-min	pb-4">
                     <h1 class="text-center uppercase font-bold">{{ species }}</h1>
                     <div class="w-full">
-                        <img :src="imageUrl+pokemonId+'.png'" alt="" class="mx-auto" srcset="">
+                        <img :src="imageUrl+pokemonId+'.png'" alt="" class="mx-auto w-80" srcset="">
+                    </div>
+                    <div class="grid grid-cols-2">
+                        <div class="float-left"><a href="/" class=" rounded-lg font-bold py-2 px-4 bg-red-700 hover:bg-red-400 text-red-50 hover:text-black">Back to Home</a></div>
+                        <div class="float-left"><a href="#" class=" rounded-lg font-bold py-2 px-4 bg-green-700 hover:bg-green-400 text-green-50 hover:text-black">Catch</a></div>
                     </div>
                 </div>
-                <div class="col-span-2 bg-champagne sm:p-4">
-                    <h3 class="font-bold mb-2">Abilities</h3>
-                    <div class="flex flex-row gap-x-2">
-                        <p class="rounded outline outline-offset-2 outline-blue-500" v-for="(row, index) in abilities">
-                        {{ row[index].ability.name }}</p>
+                <div class="col-span-2 bg-champagne rounded sm:p-4">
+                    <div>
+                        <div class="divide-y divide-dashed">
+                            <div>
+                                <div class="font-bold">Species</div>
+                                <div class="capitalize">{{ species }}</div>
+                            </div>
+                            <div>
+                                <div class="font-bold">Height</div>
+                                <div>{{ height / 100 }} m</div>
+                            </div>
+                            <div>
+                                <div class="font-bold">Weight</div>
+                                <div>{{ weight }} gram</div>
+                            </div>
+                            <div>
+                                <div class="font-bold">Experience</div>
+                                <div>{{ experience }} XP</div>
+                            </div>                          
+                            <div >
+                                <h3 class="font-bold mb-2">Abilities</h3>
+                                <div v-for="(ability, index) in abilities" class="flex flex-row gap-x-2">
+                                    <div v-for="(row, i) in ability" class="rounded ">
+                                        <div class="" :class="{'font-bold text-green-700': ability[i].is_hidden, 'text-red-700': ability[i].is_hidden == false}">{{ row.ability.name }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <h3 class="font-bold mb-2">Types</h3>
+                                <div class="flex flex-row gap-x-2" v-for="(type, index) in types">
+                                    <div v-for="(row) in type" class="rounded outline outline-offset-2 outline-blue-500">
+                                        {{ row.type.name }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="font-bold">Moves</div>
+                                
+                                <div class="flex flex-wrap gap-y-4 gap-x-4 mt-2 mb-4" v-for="move in moves">
+                                    <div class="outline outline-2 outline-offset-2 rounded" v-for="row in move">
+                                        {{ row.move.name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -26,7 +70,8 @@ export default {
     data() {
         return {
             abilities: [],
-            type: [],
+            types: [],
+            moves: [],
             species: '',
             weight: 0,
             height: 0,
@@ -42,11 +87,12 @@ export default {
         .then((response) => {
             let data = response.data
             this.abilities.push(data.abilities)
-            this.type.push(data.type)
+            this.types.push(data.types)
             this.species    = data.name
             this.weight     = data.weight
             this.height     = data.height
-            this.experience = data.experience
+            this.experience = data.base_experience
+            this.moves.push(data.moves)
             console.log(data)
         })
     }

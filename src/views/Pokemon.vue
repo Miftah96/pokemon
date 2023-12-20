@@ -1,13 +1,13 @@
 <template>
-  <div class="mx-auto max-w-2xl px-4 py-18 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-      <div class="grid grid-cols-4 gap-x-8 gap-y-8"  >
-          <a v-for="row in pokemons" :key="row.id" class="bg-champagne hover:bg-macaroni shadow-xl" :href="row.id">
+  <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-2 gap-y-2"  >
+          <a v-for="row in pokemons" :key="row.id" class="bg-champagne rounded hover:bg-macaroni shadow-xl" :href="row.id">
               <div class="mx-auto relative">
                   <div class="w-full">
-                      <img :src="imageUrl+row.id+'.png'" class="mx-auto" alt="">
+                      <img :src="imageUrl+row.id+'.png'" class="mx-auto  w-40" alt="">
                   </div>
                   
-                  <div class="text-center capitalize font-bold">{{ row.name }}</div>
+                  <p class="text-center capitalize font-bold">{{ row.name }}</p>
               </div>
           </a>
       </div>
@@ -26,7 +26,7 @@
         },
         mounted() {
             axios
-            .get('https://pokeapi.co/api/v2/pokemon?limit=20')
+            .get('https://pokeapi.co/api/v2/pokemon?limit=100')
             .then((response) => {
                 let data = response.data
                 data.results.forEach(pokemon => {
