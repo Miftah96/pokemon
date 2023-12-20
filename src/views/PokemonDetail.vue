@@ -73,7 +73,7 @@
         <template v-slot:body>
             <div v-for="data in myPokemon ">
                 <div v-for="(row, index) in data">
-                    <!-- <div v-if="{ row ==}"></div> -->
+                    {{ row.generate_name}}
                 </div>
             </div>
         </template>
@@ -115,8 +115,8 @@ export default {
     },
     mounted() {
         axios
-        .get(this.apiUrl+this.pokemonId)
-        .then((response) => {
+            .get(this.apiUrl+this.pokemonId)
+            .then((response) => {
             let data = response.data
             this.abilities.push(data.abilities)
             this.types.push(data.types)
@@ -127,9 +127,9 @@ export default {
             this.moves.push(data.moves)
         }),
         axios.get(`http://localhost:8081/api/pokemon/?id=`+this.pokemonId)
-            .then((res) => {
-                this.myPokemon.push(res)
-            })
+        .then((res) => {
+            this.myPokemon.push(res.data.data)
+        })
     },
     methods: {
         redirectToHome() {

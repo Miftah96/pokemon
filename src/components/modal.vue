@@ -22,7 +22,7 @@
 
         <footer class="modal-footer">
           <slot name="footer">
-            This is the default footer
+            Tangkap aku
           </slot>
           <button
             type="button"
