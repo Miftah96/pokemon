@@ -7,9 +7,10 @@
                     <div class="w-full">
                         <img :src="imageUrl+pokemonId+'.png'" alt="" class="mx-auto w-80" srcset="">
                     </div>
-                    <div class="grid grid-cols-2">
-                        <div class="float-left"><a href="/" class=" rounded-lg font-bold py-2 px-4 bg-red-700 hover:bg-red-400 text-red-50 hover:text-black">Back to Home</a></div>
-                        <div class="float-left"><a href="#" class=" rounded-lg font-bold py-2 px-4 bg-green-700 hover:bg-green-400 text-green-50 hover:text-black">Catch</a></div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button @click="redirectToHome" class="text-center rounded-lg font-bold py-2 px-4 bg-red-700 hover:bg-red-400 text-red-50 hover:text-black">Back to Home</button>
+                        <button v-on:click="catchMyPokemon(species,pokemonId)" class="text-center rounded-lg font-bold py-2 px-4 bg-green-700 hover:bg-green-400 text-green-50 hover:text-black">Catch</button>
+                        <button @click="showModal"  class="text-center rounded-lg font-bold py-2 px-4 bg-blue-700 hover:bg-blue-400 text-green-50 hover:text-black">My Pokemon</button>
                     </div>
                 </div>
                 <div class="col-span-2 bg-champagne rounded sm:p-4">
@@ -62,11 +63,40 @@
             </div>
         </div>
     </div>
+    <Modal 
+        v-show="isModalVisible"
+        @close="closeModal">
+        <template v-slot:header>
+            My Pokemon
+        </template>
+
+        <template v-slot:body>
+            <div v-for="data in myPokemon ">
+                <div v-for="(row, index) in data">
+                    <!-- <div v-if="{ row ==}"></div> -->
+                </div>
+            </div>
+        </template>
+
+        <template v-slot:footer>
+            Close
+        </template>    
+    </Modal>
 </template>
 
 <script>
-import axios  from "axios";
+import { useToast } from "vue-toastification";
+import axios from "axios";
+import Modal from "@/components/modal.vue"
+
 export default {
+    setup() {
+      const toast = useToast();
+      return { toast }
+    },
+    components: {
+      Modal,
+    },
     data() {
         return {
             abilities: [],
@@ -78,7 +108,9 @@ export default {
             experience: '',
             imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/',
             pokemonId: window.location.href.split('/')[3],
-            apiUrl: 'https://pokeapi.co/api/v2/pokemon/'
+            apiUrl: 'https://pokeapi.co/api/v2/pokemon/',
+            isModalVisible: false,
+            myPokemon: []
         }
     },
     mounted() {
@@ -93,8 +125,37 @@ export default {
             this.height     = data.height
             this.experience = data.base_experience
             this.moves.push(data.moves)
-            console.log(data)
-        })
+        }),
+        axios.get(`http://localhost:8081/api/pokemon/?id=`+this.pokemonId)
+            .then((res) => {
+                this.myPokemon.push(res)
+            })
+    },
+    methods: {
+        redirectToHome() {
+            this.$router.push('/');
+        },
+        showModal() {
+            this.isModalVisible = true;
+        },
+        closeModal() {
+            this.isModalVisible = false;
+        },
+        async catchMyPokemon(species, id) {
+            try {
+                const response = await axios.post(`http://localhost:8081/api/pokemon/catch?id=${id}&species=${species}`,{
+                    headers: {
+                        "Cache-Control": "no-cache",
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Access-Control-Allow-Origin": "*",
+                    },
+                })
+
+                this.toast.info(`Horee, ${species} berhasil ditangkap`);
+            } catch (error) {
+                console.log('error')
+            }
+        }
     }
 }    
     
